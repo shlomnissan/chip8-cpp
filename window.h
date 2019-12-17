@@ -7,9 +7,6 @@
 
 #include <SDL.h>
 
-constexpr uint16_t kWidth = 640;
-constexpr uint16_t kHeight = 480;
-
 class Window {
 public:
     Window(): window(nullptr), renderer(nullptr), tick(0), running(false) {}
@@ -23,6 +20,9 @@ private:
 
     uint32_t tick;
     bool running;
+
+    const int kWidth = 640;
+    const int kHeight = 480;
 };
 
 
