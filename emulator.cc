@@ -8,7 +8,7 @@
 #include "emulator.h"
 
 bool Emulator::Boot() {
-    return true;
+    return window.Initialize();
 }
 
 bool Emulator::LoadRom(const string& kFile) {
@@ -26,7 +26,7 @@ bool Emulator::LoadRom(const string& kFile) {
             std::istreambuf_iterator<char>(rom),
             std::istreambuf_iterator<char>());
 
-    // TODO: insert to memory
+    chip8.SaveRom(buffer.data(), buffer.size());
 
     return true;
 }

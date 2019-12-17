@@ -7,6 +7,9 @@
 
 #include <string>
 
+#include "window.h"
+#include "chip8.h"
+
 using std::string;
 
 class Emulator {
@@ -14,6 +17,11 @@ public:
     bool Boot();
     bool LoadRom(const string& kFile);
     void Start();
+
+    Emulator(): window() {}
+private:
+    Window window;
+    Chip8 chip8;
 };
 
 
