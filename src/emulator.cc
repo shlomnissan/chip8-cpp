@@ -37,8 +37,9 @@ void Emulator::Start() {
     while (window.get_running()) {
         tick = window.get_tick();
         window.PollEvents();
-        // TODO: emulator cycle
-        // TODO: draw screen
+
+        chip8.Cycle();
+
         window.RegulateFrameRate(tick);
     }
 }

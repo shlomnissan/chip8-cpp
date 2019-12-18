@@ -8,6 +8,6 @@ find_package(SDL2 REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIR})
 
-add_executable(chip8 main.cpp emulator.cc emulator.h window.cc window.h chip8.cc chip8.h)
+add_executable(chip8 src/main.cpp src/emulator.cc src/emulator.h src/window.cc src/window.h src/chip8.cc src/chip8.h)
 
 target_link_libraries(chip8 ${SDL2_LIBRARY})
