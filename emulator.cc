@@ -32,5 +32,13 @@ bool Emulator::LoadRom(const string& kFile) {
 }
 
 void Emulator::Start() {
+    uint32_t tick = 0;
 
+    while (window.get_running()) {
+        tick = window.get_tick();
+        window.PollEvents();
+        // TODO: emulator cycle
+        // TODO: draw screen
+        window.RegulateFrameRate(tick);
+    }
 }

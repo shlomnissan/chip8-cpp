@@ -15,6 +15,9 @@ bool Window::Initialize() {
         return false;
     }
     SDL_CreateWindowAndRenderer(kWidth, kHeight, 0, &window, &renderer);
+    SDL_SetWindowTitle(window, "Chip-8 Emulator");
+
+    running = true;
     return !(nullptr == window || nullptr == renderer);
 }
 
@@ -30,5 +33,12 @@ void Window::PollEvents() {
         if (event.type == SDL_KEYUP) {
             // TODO: handle key release
         }
+    }
+}
+
+void Window::RegulateFrameRate(uint32_t tick) {
+    const auto kOffset  = SDL_GetTicks() - tick;
+    if (kDelay > kOffset) {
+        SDL_Delay(kDelay - kOffset);
     }
 }
