@@ -4,6 +4,7 @@
 
 #include "chip8.h"
 #include <iostream>
+#include <cstring>
 
 const std::array<uint8_t, 0x50> kSprites {
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -26,10 +27,17 @@ const std::array<uint8_t, 0x50> kSprites {
 
 constexpr int kStartAddress = 0x200;
 
+constexpr int kOperationsDefault = 0x1;
+constexpr int kOperations0 = 0x0;
+constexpr int kOperations8 = 0x8;
+constexpr int kOperationsE = 0xE;
+constexpr int kOperationsF = 0xF;
+
 Chip8::Chip8(): memory({0}),
                 V({0}),
                 display({0}),
                 stack({0}),
+                operations(),
                 t_delay(0),
                 t_sound(0),
                 I(0),
@@ -40,7 +48,16 @@ Chip8::Chip8(): memory({0}),
     // Store sprites data at the beginning of the memory
     std::memcpy(memory.data(), kSprites.data(), kSprites.size());
 
-    operations[0x6] = std::bind(&Chip8::OP_6xkk, this);
+    operations[kOperations0][0x0] = std::bind(&Chip8::OP_00E0, this);
+    operations[kOperations0][0xE] = std::bind(&Chip8::OP_00EE, this);
+
+    operations[kOperationsDefault][0x1] = std::bind(&Chip8::OP_1nnn, this);
+    operations[kOperationsDefault][0x2] = std::bind(&Chip8::OP_2nnn, this);
+    operations[kOperationsDefault][0x3] = std::bind(&Chip8::OP_3xkk, this);
+    operations[kOperationsDefault][0x4] = std::bind(&Chip8::OP_4xkk, this);
+    operations[kOperationsDefault][0x5] = std::bind(&Chip8::OP_5xy0, this);
+    operations[kOperationsDefault][0x6] = std::bind(&Chip8::OP_6xkk, this);
+    operations[kOperationsDefault][0x7] = std::bind(&Chip8::OP_7xkk, this);
 }
 
 void Chip8::SaveRom(const void *source, size_t size) {
@@ -65,6 +82,24 @@ void Chip8::Cycle() {
     // Fetch opcode
     opcode = memory[pc] << 8 | memory[pc + 1];
 
+    switch((opcode & 0xF000) >> 12) {
+        case kOperations0:
+            operations[kOperations0][(opcode & 0x000F)]();
+            break;
+        case kOperations8:
+            // Handle operations
+            break;
+        case kOperationsE:
+            // Handle operations
+            break;
+        case kOperationsF:
+            // Handle operations
+            break;
+        default: {
+            operations[kOperationsDefault][((opcode & 0xF000) >> 12)]();
+        }
+    }
+
     // Decrement the delay timer if it's been set
     if (t_delay > 0) {
         --t_delay;
@@ -76,7 +111,38 @@ void Chip8::Cycle() {
     }
 }
 
-void Chip8::OP_6xkk() {
-    std::cout << "Execute OP_6xkk\n";
+void Chip8::OP_00E0() {
+
 }
 
+void Chip8::OP_00EE() {
+
+}
+
+void Chip8::OP_1nnn() {
+
+}
+
+void Chip8::OP_2nnn() {
+
+}
+
+void Chip8::OP_3xkk() {
+
+}
+
+void Chip8::OP_4xkk() {
+
+}
+
+void Chip8::OP_5xy0() {
+
+}
+
+void Chip8::OP_6xkk() {
+
+}
+
+void Chip8::OP_7xkk() {
+
+}

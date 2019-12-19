@@ -7,6 +7,7 @@
 
 #include <array>
 #include <unordered_map>
+#include <functional>
 
 class Chip8 {
 public:
@@ -16,15 +17,14 @@ public:
     void Reset();
     void Cycle();
 private:
-    using operations_set = std::unordered_map<uint16_t, std::function<void(void)>>;
+    using operations_set = std::unordered_map<uint8_t, std::function<void(void)>>;
 
     std::array<uint8_t, 0x1000> memory;
     std::array<uint8_t, 0x10> V;
     std::array<uint8_t, 0x800> display;
     std::array<uint16_t, 0x10> stack;
 
-    // TODO: replace with operation set
-    std::unordered_map<uint16_t, std::function<void(void)>> operations;
+    std::unordered_map<uint8_t, operations_set> operations;
 
     uint8_t t_delay;
     uint8_t t_sound;
@@ -52,8 +52,32 @@ private:
         0x76, // V
     };
 
+    // CLS
+    void OP_00E0();
+
+    // RET
+    void OP_00EE();
+
+    // JP address
+    void OP_1nnn();
+
+    // CALL address
+    void OP_2nnn();
+
+    // SE Vx, byte
+    void OP_3xkk();
+
+    // SNE Vx, byte
+    void OP_4xkk();
+
+    // SE Vx, Vy
+    void OP_5xy0();
+
     // LD Vx, byte
     void OP_6xkk();
+
+    // ADD Vx, byte
+    void OP_7xkk();
 };
 
 
