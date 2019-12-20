@@ -27,11 +27,11 @@ const std::array<uint8_t, 0x50> kSprites {
 
 constexpr int kStartAddress = 0x200;
 
-constexpr int kOperationsDefault = 0x1;
-constexpr int kOperations0 = 0x0;
-constexpr int kOperations8 = 0x8;
-constexpr int kOperationsE = 0xE;
-constexpr int kOperationsF = 0xF;
+constexpr int kOp1 = 0x1; // Default operations set
+constexpr int kOp0 = 0x0;
+constexpr int kOp8 = 0x8;
+constexpr int kOpE = 0xE;
+constexpr int kOpF = 0xF;
 
 Chip8::Chip8(): memory({0}),
                 V({0}),
@@ -48,16 +48,7 @@ Chip8::Chip8(): memory({0}),
     // Store sprites data at the beginning of the memory
     std::memcpy(memory.data(), kSprites.data(), kSprites.size());
 
-    operations[kOperations0][0x0] = std::bind(&Chip8::OP_00E0, this);
-    operations[kOperations0][0xE] = std::bind(&Chip8::OP_00EE, this);
-
-    operations[kOperationsDefault][0x1] = std::bind(&Chip8::OP_1nnn, this);
-    operations[kOperationsDefault][0x2] = std::bind(&Chip8::OP_2nnn, this);
-    operations[kOperationsDefault][0x3] = std::bind(&Chip8::OP_3xkk, this);
-    operations[kOperationsDefault][0x4] = std::bind(&Chip8::OP_4xkk, this);
-    operations[kOperationsDefault][0x5] = std::bind(&Chip8::OP_5xy0, this);
-    operations[kOperationsDefault][0x6] = std::bind(&Chip8::OP_6xkk, this);
-    operations[kOperationsDefault][0x7] = std::bind(&Chip8::OP_7xkk, this);
+    BindOperations();
 }
 
 void Chip8::SaveRom(const void *source, size_t size) {
@@ -86,20 +77,20 @@ void Chip8::Cycle() {
 
     try {
         switch((opcode & 0xF000) >> 12) {
-            case kOperations0:
-                operations[kOperations0][(opcode & 0x000F)]();
+            case kOp0:
+                operations[kOp0][(opcode & 0x000F)]();
                 break;
-            case kOperations8:
-                //operations[kOperations8][(opcode & 0x000F)]();
+            case kOp8:
+                operations[kOp8][(opcode & 0x000F)]();
                 break;
-            case kOperationsE:
-                //operations[kOperationsE][(opcode & 0x000F)]();
+            case kOpE:
+                operations[kOpE][(opcode & 0x000F)]();
                 break;
-            case kOperationsF:
-                //operations[kOperationsF][(opcode & 0x00FF)]();
+            case kOpF:
+                operations[kOpF][(opcode & 0x00FF)]();
                 break;
             default: {
-                operations[kOperationsDefault][((opcode & 0xF000) >> 12)]();
+                operations[kOp1][((opcode & 0xF000) >> 12)]();
             }
         }
     } catch (const std::exception& e) {
@@ -117,6 +108,45 @@ void Chip8::Cycle() {
     if (t_sound > 0) {
         --t_sound;
     }
+}
+
+void Chip8::BindOperations() {
+    using std::bind;
+
+    operations[kOp0][0x00] = bind(&Chip8::OP_00E0, this);
+    operations[kOp0][0x0E] = bind(&Chip8::OP_00EE, this);
+    operations[kOp1][0x01] = bind(&Chip8::OP_1nnn, this);
+    operations[kOp1][0x02] = bind(&Chip8::OP_2nnn, this);
+    operations[kOp1][0x03] = bind(&Chip8::OP_3xkk, this);
+    operations[kOp1][0x04] = bind(&Chip8::OP_4xkk, this);
+    operations[kOp1][0x05] = bind(&Chip8::OP_5xy0, this);
+    operations[kOp1][0x06] = bind(&Chip8::OP_6xkk, this);
+    operations[kOp1][0x07] = bind(&Chip8::OP_7xkk, this);
+    operations[kOp1][0x09] = bind(&Chip8::OP_9xy0, this);
+    operations[kOp1][0x0A] = bind(&Chip8::OP_Annn, this);
+    operations[kOp1][0x0B] = bind(&Chip8::OP_Bnnn, this);
+    operations[kOp1][0x0C] = bind(&Chip8::OP_Cxkk, this);
+    operations[kOp1][0x0D] = bind(&Chip8::OP_Dxyn, this);
+    operations[kOp8][0x00] = bind(&Chip8::OP_8xy0, this);
+    operations[kOp8][0x01] = bind(&Chip8::OP_8xy1, this);
+    operations[kOp8][0x02] = bind(&Chip8::OP_8xy2, this);
+    operations[kOp8][0x03] = bind(&Chip8::OP_8xy3, this);
+    operations[kOp8][0x04] = bind(&Chip8::OP_8xy4, this);
+    operations[kOp8][0x05] = bind(&Chip8::OP_8xy5, this);
+    operations[kOp8][0x06] = bind(&Chip8::OP_8xy6, this);
+    operations[kOp8][0x07] = bind(&Chip8::OP_8xy7, this);
+    operations[kOp8][0x0E] = bind(&Chip8::OP_8xyE, this);
+    operations[kOpE][0x01] = bind(&Chip8::OP_ExA1, this);
+    operations[kOpE][0x0E] = bind(&Chip8::OP_Ex9E, this);
+    operations[kOpF][0x07] = bind(&Chip8::OP_Fx07, this);
+    operations[kOpF][0x0A] = bind(&Chip8::OP_Fx0A, this);
+    operations[kOpF][0x15] = bind(&Chip8::OP_Fx15, this);
+    operations[kOpF][0x18] = bind(&Chip8::OP_Fx18, this);
+    operations[kOpF][0x1E] = bind(&Chip8::OP_Fx1E, this);
+    operations[kOpF][0x29] = bind(&Chip8::OP_Fx29, this);
+    operations[kOpF][0x33] = bind(&Chip8::OP_Fx33, this);
+    operations[kOpF][0x55] = bind(&Chip8::OP_Fx55, this);
+    operations[kOpF][0x65] = bind(&Chip8::OP_Fx65, this);
 }
 
 void Chip8::OP_00E0() {
@@ -152,5 +182,105 @@ void Chip8::OP_6xkk() {
 }
 
 void Chip8::OP_7xkk() {
+
+}
+
+void Chip8::OP_8xy0() {
+
+}
+
+void Chip8::OP_8xy1() {
+
+}
+
+void Chip8::OP_8xy2() {
+
+}
+
+void Chip8::OP_8xy3() {
+
+}
+
+void Chip8::OP_8xy4() {
+
+}
+
+void Chip8::OP_8xy5() {
+
+}
+
+void Chip8::OP_8xy6() {
+
+}
+
+void Chip8::OP_8xy7() {
+
+}
+
+void Chip8::OP_8xyE() {
+
+}
+
+void Chip8::OP_9xy0() {
+
+}
+
+void Chip8::OP_Annn() {
+
+}
+
+void Chip8::OP_Bnnn() {
+
+}
+
+void Chip8::OP_Cxkk() {
+
+}
+
+void Chip8::OP_Dxyn() {
+
+}
+
+void Chip8::OP_Ex9E() {
+
+}
+
+void Chip8::OP_ExA1() {
+
+}
+
+void Chip8::OP_Fx07() {
+
+}
+
+void Chip8::OP_Fx0A() {
+
+}
+
+void Chip8::OP_Fx15() {
+
+}
+
+void Chip8::OP_Fx18() {
+
+}
+
+void Chip8::OP_Fx1E() {
+
+}
+
+void Chip8::OP_Fx29() {
+
+}
+
+void Chip8::OP_Fx33() {
+
+}
+
+void Chip8::OP_Fx55() {
+
+}
+
+void Chip8::OP_Fx65() {
 
 }
