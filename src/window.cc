@@ -23,11 +23,11 @@ bool Window::Initialize() {
                                 0,
                                 &window,
                                 &renderer);
-
+    if (window == nullptr || renderer == nullptr) return false;
     SDL_SetWindowTitle(window, "Chip-8 Emulator");
 
     running = true;
-    return !(nullptr == window || nullptr == renderer);
+    return true;
 }
 
 void Window::PollEvents() {
