@@ -3,6 +3,7 @@
 //
 
 #include "window.h"
+#include "display.h"
 
 Window::~Window() {
     SDL_DestroyWindow(window);
@@ -14,7 +15,15 @@ bool Window::Initialize() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         return false;
     }
-    SDL_CreateWindowAndRenderer(kWidth, kHeight, 0, &window, &renderer);
+
+    Display& display = Display::Instance();
+
+    SDL_CreateWindowAndRenderer(display.width() * display.scale(),
+                                display.height() * display.scale(),
+                                0,
+                                &window,
+                                &renderer);
+
     SDL_SetWindowTitle(window, "Chip-8 Emulator");
 
     running = true;

@@ -35,9 +35,9 @@ constexpr int kOperationsF = 0xF;
 
 Chip8::Chip8(): memory({0}),
                 V({0}),
-                display({0}),
                 stack({0}),
                 operations(),
+                display(Display::Instance()),
                 t_delay(0),
                 t_sound(0),
                 I(0),
@@ -69,7 +69,6 @@ void Chip8::Reset() {
     // Clear out rom data from memory
     std::memset(memory.data() + kStartAddress, 0, memory.size() - kStartAddress);
     V = {0};
-    display = {0};
     stack = {0};
     I = 0;
     pc = 0x200;
@@ -82,22 +81,31 @@ void Chip8::Cycle() {
     // Fetch opcode
     opcode = memory[pc] << 8 | memory[pc + 1];
 
-    switch((opcode & 0xF000) >> 12) {
-        case kOperations0:
-            operations[kOperations0][(opcode & 0x000F)]();
-            break;
-        case kOperations8:
-            // Handle operations
-            break;
-        case kOperationsE:
-            // Handle operations
-            break;
-        case kOperationsF:
-            // Handle operations
-            break;
-        default: {
-            operations[kOperationsDefault][((opcode & 0xF000) >> 12)]();
+    // Increment PC before execution
+    pc += 2;
+
+    try {
+        switch((opcode & 0xF000) >> 12) {
+            case kOperations0:
+                operations[kOperations0][(opcode & 0x000F)]();
+                break;
+            case kOperations8:
+                //operations[kOperations8][(opcode & 0x000F)]();
+                break;
+            case kOperationsE:
+                //operations[kOperationsE][(opcode & 0x000F)]();
+                break;
+            case kOperationsF:
+                //operations[kOperationsF][(opcode & 0x00FF)]();
+                break;
+            default: {
+                operations[kOperationsDefault][((opcode & 0xF000) >> 12)]();
+            }
         }
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << '\n'
+                  << "Failed to execute opcode: "
+                  << std::hex << opcode << '\n';
     }
 
     // Decrement the delay timer if it's been set
@@ -112,7 +120,7 @@ void Chip8::Cycle() {
 }
 
 void Chip8::OP_00E0() {
-
+    display.ClearScreen();
 }
 
 void Chip8::OP_00EE() {

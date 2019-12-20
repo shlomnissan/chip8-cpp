@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <functional>
 
+#include "display.h"
+
 class Chip8 {
 public:
     Chip8();
@@ -21,10 +23,10 @@ private:
 
     std::array<uint8_t, 0x1000> memory;
     std::array<uint8_t, 0x10> V;
-    std::array<uint8_t, 0x800> display;
     std::array<uint16_t, 0x10> stack;
 
     std::unordered_map<uint8_t, operations_set> operations;
+    Display display;
 
     uint8_t t_delay;
     uint8_t t_sound;

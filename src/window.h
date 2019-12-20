@@ -27,9 +27,6 @@ private:
 
     // 1000ms / 60fps = 16.66 delay
     const float kDelay = 16.66f;
-
-    const int kWidth = 640;
-    const int kHeight = 480;
 };
 
 
