@@ -38,7 +38,7 @@ private:
     uint16_t sp;
     uint16_t opcode;
 
-    friend class Disassembler;
+    friend class Interpreter;
 
     const std::array<uint8_t, 0x10> kKeyMap{
             0x78, // X

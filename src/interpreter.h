@@ -2,16 +2,16 @@
 // Created by Shlomi Nissan on 12/20/19.
 //
 
-#ifndef CHIP8_DISASSEMBLER_H
-#define CHIP8_DISASSEMBLER_H
+#ifndef CHIP8_INTERPRETER_H
+#define CHIP8_INTERPRETER_H
 
 #include "chip8.h"
 
-class Disassembler {
+class Interpreter {
 private:
     Chip8 c8;
 public:
-    explicit Disassembler(Chip8 chip8): c8(chip8) {}
+    explicit Interpreter(Chip8 chip8): c8(chip8) {}
 
     // CLS
     void OP_00E0();
@@ -117,4 +117,4 @@ public:
 };
 
 
-#endif //CHIP8_DISASSEMBLER_H
+#endif //CHIP8_INTERPRETER_H

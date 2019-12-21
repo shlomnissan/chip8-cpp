@@ -3,7 +3,7 @@
 //
 
 #include "chip8.h"
-#include "disassembler.h"
+#include "interpreter.h"
 
 #include <iostream>
 #include <cstring>
@@ -115,40 +115,40 @@ void Chip8::Cycle() {
 }
 
 void Chip8::BindOperations() {
-    Disassembler d(*this);
+    Interpreter i(*this);
 
-    operations[kOp0][0x00] = std::bind(&Disassembler::OP_00E0, d);
-    operations[kOp0][0x0E] = std::bind(&Disassembler::OP_00EE, d);
-    operations[kOp1][0x01] = std::bind(&Disassembler::OP_1nnn, d);
-    operations[kOp1][0x02] = std::bind(&Disassembler::OP_2nnn, d);
-    operations[kOp1][0x03] = std::bind(&Disassembler::OP_3xkk, d);
-    operations[kOp1][0x04] = std::bind(&Disassembler::OP_4xkk, d);
-    operations[kOp1][0x05] = std::bind(&Disassembler::OP_5xy0, d);
-    operations[kOp1][0x06] = std::bind(&Disassembler::OP_6xkk, d);
-    operations[kOp1][0x07] = std::bind(&Disassembler::OP_7xkk, d);
-    operations[kOp1][0x09] = std::bind(&Disassembler::OP_9xy0, d);
-    operations[kOp1][0x0A] = std::bind(&Disassembler::OP_Annn, d);
-    operations[kOp1][0x0B] = std::bind(&Disassembler::OP_Bnnn, d);
-    operations[kOp1][0x0C] = std::bind(&Disassembler::OP_Cxkk, d);
-    operations[kOp1][0x0D] = std::bind(&Disassembler::OP_Dxyn, d);
-    operations[kOp8][0x00] = std::bind(&Disassembler::OP_8xy0, d);
-    operations[kOp8][0x01] = std::bind(&Disassembler::OP_8xy1, d);
-    operations[kOp8][0x02] = std::bind(&Disassembler::OP_8xy2, d);
-    operations[kOp8][0x03] = std::bind(&Disassembler::OP_8xy3, d);
-    operations[kOp8][0x04] = std::bind(&Disassembler::OP_8xy4, d);
-    operations[kOp8][0x05] = std::bind(&Disassembler::OP_8xy5, d);
-    operations[kOp8][0x06] = std::bind(&Disassembler::OP_8xy6, d);
-    operations[kOp8][0x07] = std::bind(&Disassembler::OP_8xy7, d);
-    operations[kOp8][0x0E] = std::bind(&Disassembler::OP_8xyE, d);
-    operations[kOpE][0x01] = std::bind(&Disassembler::OP_ExA1, d);
-    operations[kOpE][0x0E] = std::bind(&Disassembler::OP_Ex9E, d);
-    operations[kOpF][0x07] = std::bind(&Disassembler::OP_Fx07, d);
-    operations[kOpF][0x0A] = std::bind(&Disassembler::OP_Fx0A, d);
-    operations[kOpF][0x15] = std::bind(&Disassembler::OP_Fx15, d);
-    operations[kOpF][0x18] = std::bind(&Disassembler::OP_Fx18, d);
-    operations[kOpF][0x1E] = std::bind(&Disassembler::OP_Fx1E, d);
-    operations[kOpF][0x29] = std::bind(&Disassembler::OP_Fx29, d);
-    operations[kOpF][0x33] = std::bind(&Disassembler::OP_Fx33, d);
-    operations[kOpF][0x55] = std::bind(&Disassembler::OP_Fx55, d);
-    operations[kOpF][0x65] = std::bind(&Disassembler::OP_Fx65, d);
+    operations[kOp0][0x00] = std::bind(&Interpreter::OP_00E0, i);
+    operations[kOp0][0x0E] = std::bind(&Interpreter::OP_00EE, i);
+    operations[kOp1][0x01] = std::bind(&Interpreter::OP_1nnn, i);
+    operations[kOp1][0x02] = std::bind(&Interpreter::OP_2nnn, i);
+    operations[kOp1][0x03] = std::bind(&Interpreter::OP_3xkk, i);
+    operations[kOp1][0x04] = std::bind(&Interpreter::OP_4xkk, i);
+    operations[kOp1][0x05] = std::bind(&Interpreter::OP_5xy0, i);
+    operations[kOp1][0x06] = std::bind(&Interpreter::OP_6xkk, i);
+    operations[kOp1][0x07] = std::bind(&Interpreter::OP_7xkk, i);
+    operations[kOp1][0x09] = std::bind(&Interpreter::OP_9xy0, i);
+    operations[kOp1][0x0A] = std::bind(&Interpreter::OP_Annn, i);
+    operations[kOp1][0x0B] = std::bind(&Interpreter::OP_Bnnn, i);
+    operations[kOp1][0x0C] = std::bind(&Interpreter::OP_Cxkk, i);
+    operations[kOp1][0x0D] = std::bind(&Interpreter::OP_Dxyn, i);
+    operations[kOp8][0x00] = std::bind(&Interpreter::OP_8xy0, i);
+    operations[kOp8][0x01] = std::bind(&Interpreter::OP_8xy1, i);
+    operations[kOp8][0x02] = std::bind(&Interpreter::OP_8xy2, i);
+    operations[kOp8][0x03] = std::bind(&Interpreter::OP_8xy3, i);
+    operations[kOp8][0x04] = std::bind(&Interpreter::OP_8xy4, i);
+    operations[kOp8][0x05] = std::bind(&Interpreter::OP_8xy5, i);
+    operations[kOp8][0x06] = std::bind(&Interpreter::OP_8xy6, i);
+    operations[kOp8][0x07] = std::bind(&Interpreter::OP_8xy7, i);
+    operations[kOp8][0x0E] = std::bind(&Interpreter::OP_8xyE, i);
+    operations[kOpE][0x01] = std::bind(&Interpreter::OP_ExA1, i);
+    operations[kOpE][0x0E] = std::bind(&Interpreter::OP_Ex9E, i);
+    operations[kOpF][0x07] = std::bind(&Interpreter::OP_Fx07, i);
+    operations[kOpF][0x0A] = std::bind(&Interpreter::OP_Fx0A, i);
+    operations[kOpF][0x15] = std::bind(&Interpreter::OP_Fx15, i);
+    operations[kOpF][0x18] = std::bind(&Interpreter::OP_Fx18, i);
+    operations[kOpF][0x1E] = std::bind(&Interpreter::OP_Fx1E, i);
+    operations[kOpF][0x29] = std::bind(&Interpreter::OP_Fx29, i);
+    operations[kOpF][0x33] = std::bind(&Interpreter::OP_Fx33, i);
+    operations[kOpF][0x55] = std::bind(&Interpreter::OP_Fx55, i);
+    operations[kOpF][0x65] = std::bind(&Interpreter::OP_Fx65, i);
 }
