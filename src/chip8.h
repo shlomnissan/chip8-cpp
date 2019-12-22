@@ -22,7 +22,7 @@ private:
     using operations_set = std::unordered_map<uint8_t, std::function<void(void)>>;
 
     std::array<uint8_t, 0x1000> memory;
-    std::array<uint8_t, 0x10> V;
+    std::array<uint8_t, 0x10> registers;
     std::array<uint16_t, 0x10> stack;
 
     std::unordered_map<uint8_t, operations_set> operations;

@@ -41,7 +41,7 @@ constexpr int kOpE = 0xE;
 constexpr int kOpF = 0xF;
 
 Chip8::Chip8(): memory({0}),
-                V({0}),
+                registers({0}),
                 stack({0}),
                 operations(),
                 display(Display::Instance()),
@@ -69,7 +69,7 @@ void Chip8::SaveRom(const void *source, size_t size) {
 void Chip8::Reset() {
     // Clear out rom data from memory
     memset(memory.data() + kStartAddress, 0, memory.size() - kStartAddress);
-    V = {0};
+    registers = {0};
     stack = {0};
     I = 0;
     pc = 0x200;

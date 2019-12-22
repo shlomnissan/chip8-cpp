@@ -4,46 +4,75 @@
 
 #include "interpreter.h"
 
+// Clear the screen
 void Interpreter::OP_00E0() {
     c8.display.ClearScreen();
 }
 
+// Return from a subroutine
 void Interpreter::OP_00EE() {
-    c8.sp--;
-    c8.pc = c8.stack[c8.sp];
+    c8.pc = c8.stack[c8.sp--];
 }
 
+// Jump to location nnn
 void Interpreter::OP_1nnn() {
     uint16_t address = c8.opcode & 0x0FFFu;
     c8.pc = address;
 }
 
+// Call subroutine at nnn
 void Interpreter::OP_2nnn() {
-
+    uint16_t address = c8.opcode & 0x0FFFu;
+    c8.stack[c8.sp++] = c8.pc;
+    c8.pc = address;
 }
 
+// Skip next instruction of Vx == kk
 void Interpreter::OP_3xkk() {
-
+    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
+    uint8_t byte = c8.opcode & 0x00FFu;
+    if (c8.registers[Vx] == byte) {
+        c8.pc += 2;
+    }
 }
 
+// Skip next instruction if Vx != kk
 void Interpreter::OP_4xkk() {
-
+    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
+    uint8_t byte = c8.opcode & 0x00FFu;
+    if (c8.registers[Vx] != byte) {
+        c8.pc += 2;
+    }
 }
 
+// Skip next instruction if Vx = Vy
 void Interpreter::OP_5xy0() {
-
+    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
+    uint8_t Vy = c8.opcode & 0x00F0u >> 4u;
+    if (c8.registers[Vx] == c8.registers[Vy]) {
+        c8.pc += 2;
+    }
 }
 
+// Set Vx = kk
 void Interpreter::OP_6xkk() {
-
+    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
+    uint8_t byte = c8.opcode & 0x00FFu;
+    c8.registers[Vx] = byte;
 }
 
+// Set Vx = Vx + kk
 void Interpreter::OP_7xkk() {
-
+    uint8_t Vx = (c8.opcode & 0x0F00u) >> 8u;
+    uint8_t byte = c8.opcode & 0x00FFu;
+    c8.registers[Vx] += byte;
 }
 
+// Set Vx = Vy
 void Interpreter::OP_8xy0() {
-
+    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
+    uint8_t Vy = c8.opcode & 0x00F0u >> 4u;
+    c8.registers[Vx] = c8.registers[Vy];
 }
 
 void Interpreter::OP_8xy1() {
