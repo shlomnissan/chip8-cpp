@@ -18,8 +18,11 @@ public:
     bool LoadRom(const string& kFile);
     void Start();
 
-    Emulator(): window() {}
+    Emulator(): display(Display::Instance()), window(
+            display.width() * display.scale(),
+            display.height() * display.scale()) {}
 private:
+    Display display;
     Window window;
     Chip8 chip8;
 };

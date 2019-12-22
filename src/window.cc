@@ -16,18 +16,12 @@ bool Window::Initialize() {
         return false;
     }
 
-    Display& display = Display::Instance();
-
-    SDL_CreateWindowAndRenderer(display.width() * display.scale(),
-                                display.height() * display.scale(),
-                                0,
-                                &window,
-                                &renderer);
+    SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
     if (window == nullptr || renderer == nullptr) return false;
     SDL_SetWindowTitle(window, "Chip-8 Emulator");
 
     running = true;
-    return true;
+    return running;
 }
 
 void Window::PollEvents() {
@@ -43,6 +37,31 @@ void Window::PollEvents() {
             // TODO: handle key release
         }
     }
+}
+
+void Window::Draw(Display &display) {
+    // Clear the screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
+    SDL_RenderClear(renderer);
+
+    // Loop through the display and draw pixels
+    for (int y = 0; y < display.height(); y++) {
+        for (int x = 0; x < display.height(); x++) {
+            if (display[x + (y * display.height())]) {
+                DrawPixel(x, y, display.scale());
+            }
+        }
+    }
+
+    SDL_RenderPresent(renderer);
+}
+
+void Window::DrawPixel(int x, int y, int scale) {
+    SDL_SetRenderDrawColor(renderer, 0x33, 0xFF, 0x66, 0xFF);
+
+    SDL_Rect rect {x * scale, y * scale, scale, scale};
+    SDL_RenderDrawRect(renderer, &rect);
+    SDL_RenderFillRect(renderer, &rect);
 }
 
 void Window::RegulateFrameRate(uint32_t tick) {
