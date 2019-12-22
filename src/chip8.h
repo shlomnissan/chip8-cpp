@@ -10,17 +10,14 @@
 #include <functional>
 
 #include "display.h"
+#include "rand.h"
 
 class Chip8 {
 public:
     Chip8();
-
     void SaveRom(const void *source, size_t size);
-
     void Reset();
-
     void Cycle();
-
 private:
     using operations_set = std::unordered_map<uint8_t, std::function<void(void)>>;
 
@@ -30,6 +27,7 @@ private:
 
     std::unordered_map<uint8_t, operations_set> operations;
     Display display;
+    Rand rand;
 
     uint8_t t_delay;
     uint8_t t_sound;

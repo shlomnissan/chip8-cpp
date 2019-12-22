@@ -7,9 +7,11 @@
 
 #include <iostream>
 #include <cstring>
+#include <chrono>
 
 using std::memset;
 using std::memcpy;
+using std::chrono::system_clock;
 
 constexpr std::array<uint8_t, 0x50> kSprites {
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -48,9 +50,13 @@ Chip8::Chip8(): memory({0}),
                 I(0),
                 pc(kStartAddress),
                 sp(0),
-                opcode(0) {
+                opcode(0),
+                rand(0, 255) {
     // Store sprites data at the beginning of the memory
     memcpy(memory.data(), kSprites.data(), kSprites.size());
+
+    // Seed random generator
+    rand.seed(system_clock::now().time_since_epoch().count());
 
     BindOperations();
 }
