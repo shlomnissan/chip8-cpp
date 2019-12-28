@@ -4,6 +4,18 @@
 
 #include "interpreter.h"
 
+//region Helpers
+
+uint8_t Interpreter::getX() {
+    return (c8.opcode & 0x0F00u) >> 8u;
+}
+
+uint8_t Interpreter::getY() {
+    return (c8.opcode & 0x00F0u) >> 4u;
+}
+
+//endregion
+
 // Clear the screen
 void Interpreter::OP_00E0() {
     c8.display.ClearScreen();
@@ -29,7 +41,7 @@ void Interpreter::OP_2nnn() {
 
 // Skip next instruction of Vx == kk
 void Interpreter::OP_3xkk() {
-    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
+    uint8_t Vx = getX();
     uint8_t byte = c8.opcode & 0x00FFu;
     if (c8.registers[Vx] == byte) {
         c8.pc += 2;
@@ -38,7 +50,7 @@ void Interpreter::OP_3xkk() {
 
 // Skip next instruction if Vx != kk
 void Interpreter::OP_4xkk() {
-    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
+    uint8_t Vx = getX();
     uint8_t byte = c8.opcode & 0x00FFu;
     if (c8.registers[Vx] != byte) {
         c8.pc += 2;
@@ -47,8 +59,8 @@ void Interpreter::OP_4xkk() {
 
 // Skip next instruction if Vx = Vy
 void Interpreter::OP_5xy0() {
-    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
-    uint8_t Vy = c8.opcode & 0x00F0u >> 4u;
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
     if (c8.registers[Vx] == c8.registers[Vy]) {
         c8.pc += 2;
     }
@@ -56,55 +68,83 @@ void Interpreter::OP_5xy0() {
 
 // Set Vx = kk
 void Interpreter::OP_6xkk() {
-    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
+    uint8_t Vx = getX();
     uint8_t byte = c8.opcode & 0x00FFu;
     c8.registers[Vx] = byte;
 }
 
 // Set Vx = Vx + kk
 void Interpreter::OP_7xkk() {
-    uint8_t Vx = (c8.opcode & 0x0F00u) >> 8u;
+    uint8_t Vx = getX();
     uint8_t byte = c8.opcode & 0x00FFu;
     c8.registers[Vx] += byte;
 }
 
 // Set Vx = Vy
 void Interpreter::OP_8xy0() {
-    uint8_t Vx = c8.opcode & 0x0F00u >> 8u;
-    uint8_t Vy = c8.opcode & 0x00F0u >> 4u;
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
     c8.registers[Vx] = c8.registers[Vy];
 }
 
+// Set Vx = Vx OR Vy
 void Interpreter::OP_8xy1() {
-
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
+    c8.registers[Vx] |= c8.registers[Vy];
 }
 
+// Set Vx = Vx AND Vy
 void Interpreter::OP_8xy2() {
-
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
+    c8.registers[Vx] &= c8.registers[Vy];
 }
 
+// Set Vx = Vx XOR Vy
 void Interpreter::OP_8xy3() {
-
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
+    c8.registers[Vx] ^= c8.registers[Vy];
 }
 
+// Set Vx = Vx + Vy, set VF = carry
 void Interpreter::OP_8xy4() {
-
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
+    uint16_t sum = c8.registers[Vx] + c8.registers[Vy];
+    c8.registers[0xF] = (sum > 255) ? 1 : 0;
+    c8.registers[Vx] = sum & 0xFFu;
 }
 
+// Set Vx = Vx - Vy, set VF = NOT borrow
 void Interpreter::OP_8xy5() {
-
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
+    c8.registers[0xF] = (c8.registers[Vx] > c8.registers[Vy]) ? 1 : 0;
+    c8.registers[Vx] -= c8.registers[Vy];
 }
 
+// Set Vx = Vx SHR 1
 void Interpreter::OP_8xy6() {
-
+    uint8_t Vx = getX();
+    c8.registers[0xF] = (c8.registers[Vx] & 0x1u);
+    c8.registers[Vx] >>= 1;
 }
 
+// Set Vx = Vy - Vx, set VF = NOT borrow
 void Interpreter::OP_8xy7() {
-
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
+    c8.registers[0xF] = (c8.registers[Vy] > c8.registers[Vx]) ? 1 : 0;
+    c8.registers[Vx] = c8.registers[Vy] - c8.registers[Vx];
 }
 
+// Set Vx = Vx SHL 1
 void Interpreter::OP_8xyE() {
-
+    uint8_t Vx = getX();
+    c8.registers[0xF] = (c8.registers[Vx] & 0x80u) >> 7u;
+    c8.registers[Vx] <<= 1;
 }
 
 void Interpreter::OP_9xy0() {

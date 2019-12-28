@@ -10,6 +10,8 @@
 class Interpreter {
 private:
     Chip8 c8;
+    uint8_t getX();
+    uint8_t getY();
 public:
     explicit Interpreter(Chip8 chip8): c8(chip8) {}
 
