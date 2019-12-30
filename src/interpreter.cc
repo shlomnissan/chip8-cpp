@@ -3,6 +3,7 @@
 //
 
 #include "interpreter.h"
+#include <iostream>
 
 //region Helpers
 
@@ -23,7 +24,7 @@ void Interpreter::OP_00E0() {
 
 // Return from a subroutine
 void Interpreter::OP_00EE() {
-    c8.pc = c8.stack[c8.sp--];
+    c8.pc = c8.stack[--c8.sp];
 }
 
 // Jump to location nnn
@@ -147,67 +148,105 @@ void Interpreter::OP_8xyE() {
     c8.registers[Vx] <<= 1;
 }
 
+// Skip next instruction if Vx != Vy
 void Interpreter::OP_9xy0() {
-
+    uint8_t Vx = getX();
+    uint8_t Vy = getY();
+    if (c8.registers[Vx] != c8.registers[Vy]) {
+        c8.pc += 2;
+    }
 }
 
+// Set I = nnn
 void Interpreter::OP_Annn() {
-
+    uint16_t address = c8.opcode & 0x0FFFu;
+    c8.I = address;
 }
 
+// Jump to location nnn + V0
 void Interpreter::OP_Bnnn() {
-
+    uint16_t address = c8.opcode & 0x0FFFu;
+    c8.pc = c8.registers[0] + address;
 }
 
+// Set Vx = random byte AND kk
 void Interpreter::OP_Cxkk() {
-
+    uint8_t Vx = getX();
+    uint8_t byte = c8.opcode & 0x00FFu;
+    c8.registers[Vx] = c8.rand() & byte;
 }
 
+// Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
 void Interpreter::OP_Dxyn() {
-
+    // TODO: implement opcode
 }
 
+// Skip next instruction if key with the value of Vx is pressed
 void Interpreter::OP_Ex9E() {
-
+    // TODO: implement opcode
 }
 
+// Skip next instruction if key with the value of Vx is not pressed
 void Interpreter::OP_ExA1() {
-
+    // TODO: implement opcode
 }
 
+// Set Vx = delay timer value
 void Interpreter::OP_Fx07() {
-
+    uint8_t Vx = getX();
+    c8.registers[Vx] = c8.t_delay;
 }
 
+// Wait for a key press, store the value of the key in Vx
 void Interpreter::OP_Fx0A() {
-
+    // TODO: implement opcode
 }
 
+// Set delay timer = Vx
 void Interpreter::OP_Fx15() {
-
+    uint8_t Vx = getX();
+    c8.t_delay = c8.registers[Vx];
 }
 
+// Set sound timer = Vx
 void Interpreter::OP_Fx18() {
-
+    uint8_t Vx = getX();
+    c8.t_sound = c8.registers[Vx];
 }
 
+// Set I = I + Vx
 void Interpreter::OP_Fx1E() {
-
+    uint8_t Vx = getX();
+    c8.I += c8.registers[Vx];
 }
 
+// Set I = location of sprite for digit Vx
 void Interpreter::OP_Fx29() {
-
+    uint8_t Vx = getX();
+    c8.I = c8.registers[Vx] * 5; // sprites start at 0x0
 }
 
+// Store BCD representation of Vx in memory locations I, I+1, and I+2
 void Interpreter::OP_Fx33() {
-
+    uint8_t Vx = getX();
+    c8.memory[c8.I] = c8.registers[Vx] / 100;
+    c8.memory[c8.I + 1] = (c8.registers[Vx] / 10) % 10;
+    c8.memory[c8.I + 2] = c8.registers[Vx] % 10;
 }
 
+// Store registers V0 through Vx in memory starting at location I
 void Interpreter::OP_Fx55() {
-
+    uint8_t Vx = getX();
+    for (uint8_t i = 0; i < Vx; ++i) {
+        c8.memory[c8.I + i] = c8.registers[i];
+    }
 }
 
+// Read registers V0 through Vx from memory starting at location I
 void Interpreter::OP_Fx65() {
-
+    uint8_t Vx = getX();
+    for (uint8_t i = 0; i < Vx; ++i) {
+        c8.registers[i] = c8.memory[c8.I + i];
+    }
 }
 

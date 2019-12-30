@@ -9,7 +9,7 @@
 
 class Rand {
 public:
-    Rand(int low, int high): rand_distribution(low, high) {}
+    Rand(int low, int high): rand_distribution(low, high), rand_engine((std::random_device())()) {}
     int operator()() {
         return rand_distribution(rand_engine);
     }
