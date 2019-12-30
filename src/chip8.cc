@@ -77,7 +77,6 @@ void Chip8::Cycle() {
     // Fetch opcode
     opcode = memory[pc] << 8 | memory[pc + 1];
 
-    std::cout << std::hex << opcode << '\n';
     // Increment PC before execution
     pc += 2;
 

@@ -9,11 +9,11 @@
 
 class Interpreter {
 private:
-    Chip8 c8;
+    Chip8& c8;
     uint8_t getX();
     uint8_t getY();
 public:
-    explicit Interpreter(Chip8 chip8): c8(chip8) {}
+    explicit Interpreter(Chip8& chip8): c8(chip8) {}
 
     // CLS
     void OP_00E0();

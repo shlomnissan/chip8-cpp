@@ -37,9 +37,6 @@ void Emulator::Start() {
     while (window.get_running()) {
         tick = window.get_tick();
         window.PollEvents();
-
-        display[1 + display.height()] = 1;
-
         chip8.Cycle();
         window.Draw(display);
         window.RegulateFrameRate(tick);

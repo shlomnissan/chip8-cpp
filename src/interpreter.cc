@@ -3,7 +3,6 @@
 //
 
 #include "interpreter.h"
-#include <iostream>
 
 //region Helpers
 
@@ -178,7 +177,25 @@ void Interpreter::OP_Cxkk() {
 
 // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
 void Interpreter::OP_Dxyn() {
-    // TODO: implement opcode
+    unsigned short Vx = c8.registers[getX()];
+    unsigned short Vy = c8.registers[getY()];
+    unsigned short height = c8.opcode & 0x000F;
+    unsigned short pixel;
+
+    c8.registers[0xF] = 0;
+
+    for (int y = 0; y < height; y++) {
+        pixel = c8.memory[c8.I + y];
+        for (int x = 0; x < 8; x++) {
+            if (pixel & (0x80u >> x)) {
+                unsigned int loc = x + Vx + (y + Vy) * c8.display.width();
+                if (c8.display[loc]) {
+                    c8.registers[0xF] = 1;
+                }
+                c8.display[loc] ^= 1;
+            }
+        }
+    }
 }
 
 // Skip next instruction if key with the value of Vx is pressed

@@ -22,7 +22,7 @@ public:
             display.width() * display.scale(),
             display.height() * display.scale()) {}
 private:
-    Display display;
+    Display& display;
     Window window;
     Chip8 chip8;
 };

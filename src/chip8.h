@@ -26,7 +26,7 @@ private:
     std::array<uint16_t, 0x10> stack;
 
     std::unordered_map<uint8_t, operations_set> operations;
-    Display display;
+    Display& display;
     Rand rand;
 
     uint8_t t_delay;
