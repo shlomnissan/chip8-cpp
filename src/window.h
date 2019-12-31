@@ -37,9 +37,6 @@ private:
     uint32_t tick;
     bool running;
 
-    // 1000ms / 60fps = 16.66 delay
-    const float kDelay = 16.66f;
-
     void DrawPixel(int x, int y, int scale);
 };
 

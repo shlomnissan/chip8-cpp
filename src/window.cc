@@ -5,6 +5,9 @@
 #include "window.h"
 #include "display.h"
 
+// 1000ms / 60fps = 16.66 delay
+const float kDelay = 16.66f;
+
 Window::~Window() {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
@@ -46,8 +49,8 @@ void Window::Draw(Display &display) {
 
     // Loop through the display and draw pixels
     for (int y = 0; y < display.height(); y++) {
-        for (int x = 0; x < display.height(); x++) {
-            if (display[x + (y * display.height())]) {
+        for (int x = 0; x < display.width(); x++) {
+            if (display[x + (y * display.width())]) {
                 DrawPixel(x, y, display.scale());
             }
         }
