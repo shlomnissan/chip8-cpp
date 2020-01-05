@@ -265,7 +265,7 @@ void Interpreter::OP_Fx33() {
 // Store registers V0 through Vx in memory starting at location I
 void Interpreter::OP_Fx55() {
     uint8_t Vx = getX();
-    for (uint8_t i = 0; i < Vx; ++i) {
+    for (uint8_t i = 0; i <= Vx; ++i) {
         c8.memory[c8.I + i] = c8.registers[i];
     }
 }
@@ -273,7 +273,7 @@ void Interpreter::OP_Fx55() {
 // Read registers V0 through Vx from memory starting at location I
 void Interpreter::OP_Fx65() {
     uint8_t Vx = getX();
-    for (uint8_t i = 0; i < Vx; ++i) {
+    for (uint8_t i = 0; i <= Vx; ++i) {
         c8.registers[i] = c8.memory[c8.I + i];
     }
 }
