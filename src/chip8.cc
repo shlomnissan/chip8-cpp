@@ -43,6 +43,7 @@ Chip8::Chip8(): memory({0}),
                 stack({0}),
                 operations(),
                 display(Display::Instance()),
+                input(Input::Instance()),
                 t_delay(0),
                 t_sound(0),
                 I(0),
@@ -103,7 +104,9 @@ void Chip8::Cycle() {
                   << "Failed to execute opcode: "
                   << std::hex << opcode << '\n';
     }
+}
 
+void Chip8::UpdateTimers() {
     // Decrement the delay timer if it's been set
     if (t_delay > 0) {
         --t_delay;

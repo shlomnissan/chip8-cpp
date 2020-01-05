@@ -200,12 +200,18 @@ void Interpreter::OP_Dxyn() {
 
 // Skip next instruction if key with the value of Vx is pressed
 void Interpreter::OP_Ex9E() {
-    // TODO: implement opcode
+    uint8_t Vx = getX();
+    if (c8.input.IsPressed(c8.registers[Vx])) {
+        c8.pc += 2;
+    }
 }
 
 // Skip next instruction if key with the value of Vx is not pressed
 void Interpreter::OP_ExA1() {
-    // TODO: implement opcode
+    uint8_t Vx = getX();
+    if (!c8.input.IsPressed(c8.registers[Vx])) {
+        c8.pc += 2;
+    }
 }
 
 // Set Vx = delay timer value

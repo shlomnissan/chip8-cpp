@@ -5,9 +5,6 @@
 #include "window.h"
 #include "display.h"
 
-// 1000ms / 60fps = 16.66 delay
-const float kDelay = 16.66f;
-
 Window::~Window() {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
@@ -27,17 +24,19 @@ bool Window::Initialize() {
     return running;
 }
 
-void Window::PollEvents() {
+void Window::PollEvents(Input& input) {
     SDL_Event event;
     while (SDL_PollEvent(&event) != 0) {
         if (event.type == SDL_QUIT) {
             running = false;
         }
         if (event.type == SDL_KEYDOWN) {
-            // TODO: handle key press
+            const uint8_t key = event.key.keysym.sym;
+            input[key] = 1;
         }
         if (event.type == SDL_KEYUP) {
-            // TODO: handle key release
+            const uint8_t& key = event.key.keysym.sym;
+            input[key] = 0;
         }
     }
 }
@@ -67,9 +66,3 @@ void Window::DrawPixel(int x, int y, int scale) {
     SDL_RenderFillRect(renderer, &rect);
 }
 
-void Window::RegulateFrameRate(uint32_t tick) {
-    const auto kOffset  = SDL_GetTicks() - tick;
-    if (kDelay > kOffset) {
-        SDL_Delay(kDelay - kOffset);
-    }
-}

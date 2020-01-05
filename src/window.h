@@ -7,6 +7,7 @@
 
 #include <SDL.h>
 #include "display.h"
+#include "input.h"
 
 class Window {
 public:
@@ -15,27 +16,22 @@ public:
         height(height),
         window(nullptr),
         renderer(nullptr),
-        tick(0),
         running(false) {}
 
     ~Window();
 
     bool get_running() { return running; }
-    uint32_t get_tick() { return SDL_GetTicks(); }
 
     bool Initialize();
-    void PollEvents();
+    void PollEvents(Input& input);
     void Draw(Display& display);
-    void RegulateFrameRate(uint32_t tick);
 private:
     int width;
     int height;
+    bool running;
 
     SDL_Window* window;
     SDL_Renderer* renderer;
-
-    uint32_t tick;
-    bool running;
 
     void DrawPixel(int x, int y, int scale);
 };
