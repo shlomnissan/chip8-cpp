@@ -18,7 +18,8 @@
     ------------------------------------------------
 */
 
-constexpr std::array<uint8_t, 0x10> kKeyMap{
+constexpr uint8_t kSize = 0x10;
+constexpr std::array<uint8_t, kSize> kKeyMap{
         0x78, // X
         0x31, // 1
         0x32, // 2
@@ -51,6 +52,10 @@ public:
             throw std::out_of_range("IsPressed : keys[] : index out of range");
         }
         return keys[kKeyMap[key]] == 1;
+    }
+
+    constexpr uint8_t size() {
+        return kSize;
     }
 
     static Input& Instance() {

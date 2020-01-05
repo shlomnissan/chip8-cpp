@@ -222,7 +222,12 @@ void Interpreter::OP_Fx07() {
 
 // Wait for a key press, store the value of the key in Vx
 void Interpreter::OP_Fx0A() {
-    // TODO: implement opcode
+    uint8_t Vx = getX();
+    for (uint8_t i = 0; i < c8.input.size(); i++) {
+        if (c8.input.IsPressed(i)) {
+            c8.registers[Vx] = i;
+        }
+    }
 }
 
 // Set delay timer = Vx
